@@ -123,4 +123,58 @@ class TestMultidimensionalList extends Specification {
     list.get(0, 3) != 5
     list.get(0, 4) == 8
   }
+
+  def "toString 1x5"() {
+    setup:
+    MultidimensionalList<Integer> list = new MultidimensionalList<Integer>()
+    
+    when:
+    list.add(0, 10)
+    list.add(0, 0)
+    list.add(0, 1)
+    list.add(0, 5)
+    list.add(0, 8)
+
+    then:
+    list.xSize() == 1
+    list.ySize(0) == 5
+    list.get(0, 0) == 10
+    list.get(0, 1) == 0
+    list.get(0, 2) == 1
+    list.get(0, 3) == 5
+    list.get(0, 4) == 8
+    list.toString() == "10 0 1 5 8"
+  }
+
+  def "toString 2x5"() {
+    setup:
+    MultidimensionalList<Integer> list = new MultidimensionalList<Integer>(2)
+    
+    when:
+    list.add(0, 10)
+    list.add(0, 0)
+    list.add(0, 1)
+    list.add(0, 5)
+    list.add(0, 8)
+    list.add(1, 2)
+    list.add(1, 3)
+    list.add(1, 4)
+    list.add(1, 5)
+    list.add(1, 6)
+
+    then:
+    list.xSize() == 2
+    list.ySize(0) == 5
+    list.get(0, 0) == 10
+    list.get(0, 1) == 0
+    list.get(0, 2) == 1
+    list.get(0, 3) == 5
+    list.get(0, 4) == 8
+    list.get(1, 0) == 2
+    list.get(1, 1) == 3
+    list.get(1, 2) == 4
+    list.get(1, 3) == 5
+    list.get(1, 4) == 6
+    list.toString() == "10 0 1 5 8\n2 3 4 5 6"
+  }
 }

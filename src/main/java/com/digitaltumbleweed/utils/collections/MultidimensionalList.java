@@ -57,4 +57,21 @@ public class MultidimensionalList<C> {
     public int ySize(int x) {
         return zero.get(x).size();
     }
+
+    @Override
+    public String toString() {
+        String s = "";
+        final int zeroSize = zero.size();
+        for (int i = 0; i < zeroSize; i++) {
+            List<C> l = zero.get(i);
+            final int lSize = l.size();
+            for (int j = 0; j < lSize; j++) {
+                C val = l.get(j);
+                s += val + ((j < (lSize-1))?" ":"");
+            }
+            s += ((i < (zeroSize-1))?"\n":"");
+        }
+
+        return s;
+    }
 }
