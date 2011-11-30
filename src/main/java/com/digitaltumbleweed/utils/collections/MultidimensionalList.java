@@ -4,83 +4,90 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
 
+//More of a table...api change later?
+//at the expense of memory for runtime, we duplicate the data and manage the duplication
+//I'm ok with this tradeoff
 public class MultidimensionalList<C> {
-    private ArrayList<LinkedList<C>> zero;
+    private ArrayList<ArrayList<C>> cols;
+    private ArrayList<ArrayList<C>> rows;
+    private int rowCount = 0;
+    private int colCount = 0;
 
     public MultidimensionalList() {
-        this(1);
+        this(1, 1);
     }
 
-    public MultidimensionalList(int initialCapacity) {
-        zero = new ArrayList<LinkedList<C>>(initialCapacity);
-        for (int i = 0; i < initialCapacity; i++) {
-            zero.add(new LinkedList<C>());
+    public MultidimensionalList(int rowCount, int colCount) {
+        this.rowCount = rowCount;
+        this.colCount = colCount;
+
+        rows = new ArrayList<ArrayList<C>>(rowCount);
+        cols = new ArrayList<ArrayList<C>>(colCount);
+
+        for (int i = 0; i < rowCount; i++) {
+            ArrayList<C> colList = new ArrayList<C>(colCount);
+            for (int j = colCount; j > 0; j--)
+                colList.add(null);
+            rows.add(colList);
+        }
+
+        for (int l = 0; l < colCount; l++) {
+            ArrayList<C> rowList = new ArrayList<C>(rowCount);
+            for (int k = rowCount; k > 0; k--)
+                rowList.add(null);
+            cols.add(rowList);
         }
     }
 
-    public void add(int x, C c) {
-        LinkedList ll = zero.get(x);
-        ll.add(c);
-        zero.set(x, ll);
-    }
-
     public void set(int x, int y, C c) {
-        LinkedList ll = zero.get(x);
-        ll.set(y, c);
-        zero.set(x, ll);
+        setRow(x, y, c);
+        setCol(x, y, c);
     }
 
-    public LinkedList remove(int x) {
-        return zero.remove(x);
+    //this isn't safe, if either x or y aren't set it will blow up.
+    private void setRow(int x, int y, C c) {
+        ArrayList<C> list = rows.get(x);
+        list.set(y, c);
+        rows.set(x, list);
     }
 
-    public C remove(int x, int y) {
-        LinkedList<C> ll = zero.get(x);
-        C c = ll.remove(y);
-        zero.set(x, ll);
-
-        return c;
+    //this isn't safe, if either x or y aren't set it will blow up.
+    private void setCol(int x, int y, C c) {
+        ArrayList<C> list = cols.get(y);
+        list.set(x, c);
+        cols.set(y, list);
     }
 
-    public LinkedList get(int x) {
-        return zero.get(x);
+    public List<C> getRow(int y) {
+        return rows.get(y);
+    }
+
+    public List<C> getCol(int x) {
+        return cols.get(x);
     }
 
     public C get(int x, int y) {
-        return zero.get(x).get(y);
+        return rows.get(x).get(y);
     }
 
-    public int xSize() {
-        return zero.size();
+    public int getRowCount() {
+        return rowCount;
     }
 
-    public int ySize(int x) {
-        return zero.get(x).size();
+    public int getColCount() {
+        return colCount;
     }
 
     @Override
     public String toString() {
         String s = "";
-        //gross. iterator or something else would be better.
-        boolean hasRow = true;
-        int maxColSize = 0;
         int i = 0;
-        while (hasRow) {
-            
-            final int zeroSize = zero.size();
-            for (int j = 0; j < zeroSize; j++) {
-                List<C> l = zero.get(j);
-                if (l.size() > maxColSize) maxColSize = l.size();
-
-                C val = l.get(i);
-                s += val + ((j < (zeroSize - 1))?" ":"");
+        for (List<C> row : rows) {
+            int j = 0;
+            for (C val : row) {
+                s += val + ((j++ < (colCount - 1))?" ":"");
             }
-
-            if (++i == maxColSize) {
-                hasRow = false;
-            } else {
-                s += "\n";
-            }
+            s += ((i++ < (rowCount - 1))?"\n":"");
         }
 
         return s;
