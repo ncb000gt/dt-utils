@@ -61,15 +61,26 @@ public class MultidimensionalList<C> {
     @Override
     public String toString() {
         String s = "";
-        final int zeroSize = zero.size();
-        for (int i = 0; i < zeroSize; i++) {
-            List<C> l = zero.get(i);
-            final int lSize = l.size();
-            for (int j = 0; j < lSize; j++) {
-                C val = l.get(j);
-                s += val + ((j < (lSize-1))?" ":"");
+        //gross. iterator or something else would be better.
+        boolean hasRow = true;
+        int maxColSize = 0;
+        int i = 0;
+        while (hasRow) {
+            
+            final int zeroSize = zero.size();
+            for (int j = 0; j < zeroSize; j++) {
+                List<C> l = zero.get(j);
+                if (l.size() > maxColSize) maxColSize = l.size();
+
+                C val = l.get(i);
+                s += val + ((j < (zeroSize - 1))?" ":"");
             }
-            s += ((i < (zeroSize-1))?"\n":"");
+
+            if (++i == maxColSize) {
+                hasRow = false;
+            } else {
+                s += "\n";
+            }
         }
 
         return s;
