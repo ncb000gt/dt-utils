@@ -5,6 +5,15 @@ import java.util.BitSet;
 import java.util.HashSet;
 
 public class ListUtils {
+    public static int combineInts(int[] list) {
+        int combiner = 0;
+        for (Integer i : list) {
+            combiner += i;
+        }
+
+        return combiner;
+    }
+
     public static int combineInts(List<Integer> list) {
         int combiner = 0;
         for (Integer i : list) {
